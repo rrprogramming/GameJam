@@ -23,24 +23,25 @@ function Start () {
 	mainCharacter.GetComponent.<Renderer>().material.color = Color.green;
 }
 
-function Update () {
-
-	if(Input.GetKey(KeyCode.D)){	//movimiento a la derecha
-		speedx += 0.5;
+function Colores () {
+	if(Input.GetKeyDown(KeyCode.Space) && colliding && collidingObject.tag == "ColorCode"){
+		var script: ColorPanel = collidingObject.GetComponent(ColorPanel);
+		if(script.colorSet > 3){
+			script.colorSet = 0;
+		}else{
+			script.colorSet += 1;
+		}
 	}
 
-	if(Input.GetKey(KeyCode.A)){	//movimiento a la izquierda
-		speedx -= 0.5;
-	}
-	if(Input.GetKey(KeyCode.W)){	//movimiento hacia arriba
-		speedy += 0.5;
-	}
-	if(Input.GetKey(KeyCode.S)){	//movimiento hacia abajo
-		speedy -= 0.5;
-	}
 
-	//======================AGARRE====================================
+	//se altera la velocidad del jugador
+	mainCharacter.GetComponent.<Rigidbody>().velocity = new Vector3(speedx, speedy, 0);
 
+	//la camara se mueve con el jugador
+	camara.transform.position = Vector3 (mainCharacter.transform.position.x,mainCharacter.transform.position.y+3,mainCharacter.transform.position.z-10);
+}
+
+function Agarre () {
 	//solo si esta cerca de algun objeto movible se efectua la acción de agarrar
 	if(Input.GetKeyUp(KeyCode.Space) && colliding && collidingObject.tag == "Mobile"){
 		grab = true;
@@ -69,24 +70,30 @@ function Update () {
 
 		collidingObject.GetComponent.<Renderer>().material.color = Color.white;
 	}
+}
 
-	//===================CODIGO DE COLORES==============================
+function Update () {
 
-	if(Input.GetKeyDown(KeyCode.Space) && colliding && collidingObject.tag == "ColorCode"){
-		var script: ColorPanel = collidingObject.GetComponent(ColorPanel);
-		if(script.colorSet > 3){
-			script.colorSet = 0;
-		}else{
-			script.colorSet += 1;
-		}
+	if(Input.GetKey(KeyCode.D)){	//movimiento a la derecha
+		speedx += 0.5;
 	}
 
+	if(Input.GetKey(KeyCode.A)){	//movimiento a la izquierda
+		speedx -= 0.5;
+	}
+	if(Input.GetKey(KeyCode.W)){	//movimiento hacia arriba
+		speedy += 0.5;
+	}
+	if(Input.GetKey(KeyCode.S)){	//movimiento hacia abajo
+		speedy -= 0.5;
+	}
 
-	//se altera la velocidad del jugador
-	mainCharacter.GetComponent.<Rigidbody>().velocity = new Vector3(speedx, speedy, 0);
+	//======================AGARRE====================================
 
-	//la camara se mueve con el jugador
-	camara.transform.position = Vector3 (mainCharacter.transform.position.x,mainCharacter.transform.position.y+3,mainCharacter.transform.position.z-10);
+	Agarre();
+
+	//===================CODIGO DE COLORES==============================
+	Colores();
 }
 
 function OnCollisionEnter(col:Collision){
