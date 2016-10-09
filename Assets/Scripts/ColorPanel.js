@@ -11,19 +11,19 @@ function Start () {
 function Update () {
 
 	switch (colorSet){
-		case 1:
+		case 0:
 			colorKey.GetComponent.<Renderer>().material.color = Color.red;
 		break;
 
-		case 2:
+		case 1:
 			colorKey.GetComponent.<Renderer>().material.color = Color.green;
 		break;
 
-		case 3:
+		case 2:
 			colorKey.GetComponent.<Renderer>().material.color = Color.blue;
 		break;
 
-		case 4:
+		case 3:
 			colorKey.GetComponent.<Renderer>().material.color = Color.yellow;
 		break;
 	}

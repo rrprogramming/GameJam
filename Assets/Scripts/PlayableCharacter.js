@@ -8,6 +8,7 @@ var movement:float;
 
 var colliding = false;		//maneja los eventos de collisiones para mantener exclusividad mutua con otras actividades
 var grab = false;			//controla los agarres
+var pause = false;			//controla la interaccion del jugador con el personaje
 
 var speedx = 0.0;			//maneja la velocidad en x del personaje
 var speedy = 0.0;			//maneja la velocidad en y del personaje
@@ -23,6 +24,21 @@ function Start () {
 	mainCharacter.GetComponent.<Renderer>().material.color = Color.green;
 }
 
+function Journal(){
+	if(Input.GetKeyDown(KeyCode.Space) && colliding && collidingObject.tag == "Journal"){
+		var script: JournalPuzzle = collidingObject.GetComponent(JournalPuzzle);
+		if(script.imageEnabled){
+			Debug.Log("un-pause");
+			script.imageEnabled = false;
+			pause = false;
+		}else{
+			Debug.Log("pause");
+			script.imageEnabled = true;
+			pause = true;
+		}
+	}
+}
+
 function Colores () {
 	if(Input.GetKeyDown(KeyCode.Space) && colliding && collidingObject.tag == "ColorCode"){
 		var script: ColorPanel = collidingObject.GetComponent(ColorPanel);
@@ -32,13 +48,6 @@ function Colores () {
 			script.colorSet += 1;
 		}
 	}
-
-
-	//se altera la velocidad del jugador
-	mainCharacter.GetComponent.<Rigidbody>().velocity = new Vector3(speedx, speedy, 0);
-
-	//la camara se mueve con el jugador
-	camara.transform.position = Vector3 (mainCharacter.transform.position.x,mainCharacter.transform.position.y+3,mainCharacter.transform.position.z-10);
 }
 
 function Agarre () {
@@ -74,33 +83,47 @@ function Agarre () {
 
 function Update () {
 
-	if(Input.GetKey(KeyCode.D)){	//movimiento a la derecha
-		speedx += 0.5;
-	}
+	if(!pause){
+		if(Input.GetKey(KeyCode.D)){	//movimiento a la derecha
+			speedx += 0.5;
+		}
 
-	if(Input.GetKey(KeyCode.A)){	//movimiento a la izquierda
-		speedx -= 0.5;
-	}
-	if(Input.GetKey(KeyCode.W)){	//movimiento hacia arriba
-		speedy += 0.5;
-	}
-	if(Input.GetKey(KeyCode.S)){	//movimiento hacia abajo
-		speedy -= 0.5;
+		if(Input.GetKey(KeyCode.A)){	//movimiento a la izquierda
+			speedx -= 0.5;
+		}
+		if(Input.GetKey(KeyCode.W)){	//movimiento hacia arriba
+			speedy += 0.5;
+		}
+		if(Input.GetKey(KeyCode.S)){	//movimiento hacia abajo
+			speedy -= 0.5;
+		}
+	}else{
+		speedy = 0.0;
+		speedx = 0.0;
 	}
 
 	//======================AGARRE====================================
-
 	Agarre();
 
-	//===================CODIGO DE COLORES==============================
+	//===================CODIGO DE COLORES============================
 	Colores();
+
+	//===================JOURNAL PUZZLE==============================
+	Journal();
+
+	//se altera la velocidad del jugador
+	mainCharacter.GetComponent.<Rigidbody>().velocity = new Vector3(speedx, speedy, 0);
+
+	//la camara se mueve con el jugador
+	camara.transform.position = Vector3 (mainCharacter.transform.position.x,mainCharacter.transform.position.y+3,mainCharacter.transform.position.z-5);
 }
 
 function OnCollisionEnter(col:Collision){
-	colliding = true;
 
 	if(col.gameObject.tag == "Mobile"){
 		collidingObject = col.gameObject;
+
+		colliding = true;
 
 		//para amantener el objeto agarrado relativo a la posicion del jugador se toman estos valores
 		if(collidingObject.transform.position.x < 0 || mainCharacter.transform.position.x < 0){
@@ -112,6 +135,10 @@ function OnCollisionEnter(col:Collision){
 		//distz = collidingObject.transform.position.z - mainCharacter.transform.position.z;
 	}
 	if(col.gameObject.tag == "ColorCode"){
+		collidingObject = col.gameObject;
+		colliding = true;
+	}
+	if(col.gameObject.tag == "Journal"){
 		collidingObject = col.gameObject;
 		colliding = true;
 	}

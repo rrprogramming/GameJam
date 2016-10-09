@@ -1,6 +1,6 @@
 ﻿#pragma strict
 
-public var isGravity = false;
+public var fish:Texture;
 
 function Start () {
 
