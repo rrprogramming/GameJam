@@ -3,6 +3,7 @@
 var mainCharacter:GameObject;
 var camara:GameObject;
 var collidingObject:GameObject;
+var universe:GameObject;
 
 var movement:float;
 
@@ -34,6 +35,7 @@ function Journal(){
 		}else{
 			Debug.Log("pause");
 			script.imageEnabled = true;
+			mainCharacter.transform.position.x = collidingObject.transform.position.x;
 			pause = true;
 		}
 	}
@@ -60,11 +62,11 @@ function Agarre () {
 	//si se esta agarrando algo la posicion del objeto agarrado se mueve con respecto al jugador
 	if(grab){
 		if(distx < 0){
-			collidingObject.transform.position.x = mainCharacter.transform.position.x-1.2;
+			collidingObject.transform.position.x = mainCharacter.transform.position.x-3.2;
 		}
 
 		if(distx > 0){
-			collidingObject.transform.position.x = mainCharacter.transform.position.x+1.2;
+			collidingObject.transform.position.x = mainCharacter.transform.position.x+3.2;
 		}
 
 		collidingObject.transform.position.y = mainCharacter.transform.position.y;
@@ -85,17 +87,21 @@ function Update () {
 
 	if(!pause){
 		if(Input.GetKey(KeyCode.D)){	//movimiento a la derecha
-			speedx += 0.5;
+			if(speedx>-3)
+				speedx -= 0.1;
 		}
 
 		if(Input.GetKey(KeyCode.A)){	//movimiento a la izquierda
-			speedx -= 0.5;
+			if(speedx<3)
+				speedx += 0.1;
 		}
 		if(Input.GetKey(KeyCode.W)){	//movimiento hacia arriba
-			speedy += 0.5;
+			if(speedy<3)
+				speedy += 0.1;
 		}
 		if(Input.GetKey(KeyCode.S)){	//movimiento hacia abajo
-			speedy -= 0.5;
+			if(speedy>-3)
+				speedy -= 0.1;
 		}
 	}else{
 		speedy = 0.0;
@@ -112,10 +118,13 @@ function Update () {
 	Journal();
 
 	//se altera la velocidad del jugador
-	mainCharacter.GetComponent.<Rigidbody>().velocity = new Vector3(speedx, speedy, 0);
+	mainCharacter.GetComponent.<Rigidbody>().velocity = new Vector3(0, speedy, 0);
+
+	universe.transform.eulerAngles = Vector3(0,0,universe.transform.eulerAngles.z+(speedx)*-0.05);
 
 	//la camara se mueve con el jugador
-	camara.transform.position = Vector3 (mainCharacter.transform.position.x,mainCharacter.transform.position.y+3,mainCharacter.transform.position.z-5);
+	camara.transform.position = Vector3 (mainCharacter.transform.position.x,mainCharacter.transform.position.y+3,mainCharacter.transform.position.z+15);
+	camara.transform.eulerAngles = Vector3(0,180,0);
 }
 
 function OnCollisionEnter(col:Collision){

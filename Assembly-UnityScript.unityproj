@@ -47,6 +47,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\ColorPanel.js" />
      <Compile Include="Assets\Scripts\Controller.js" />
+     <Compile Include="Assets\Scripts\Door.js" />
      <Compile Include="Assets\Scripts\JournalPuzzle.js" />
      <Compile Include="Assets\Scripts\PlatformPuzzle.js" />
      <Compile Include="Assets\Scripts\PlayableCharacter.js" />
