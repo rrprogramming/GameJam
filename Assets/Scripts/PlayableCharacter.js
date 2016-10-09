@@ -7,8 +7,8 @@ var collidingObject:GameObject;
 var colliding = false;		//maneja los eventos de collisiones para mantener exclusividad mutua con otras actividades
 var grab = false;			//controla los agarres
 
-var speedx = 0.0;
-var speedy = 0.0;
+var speedx = 0.0;			//maneja la velocidad en x del personaje
+var speedy = 0.0;			//maneja la velocidad en y del personaje
 
 var distx = 0.0;			//maneja las distancias entre objetos por el eje x
 var disty = 0.0;			//maneja las distancias entre objetos por el eje y
@@ -44,9 +44,16 @@ function Update () {
 
 	//si se esta agarrando algo la posicion del objeto agarrado se mueve con respecto al jugador
 	if(grab){
-		collidingObject.transform.position.x = distx + mainCharacter.transform.position.x;
-		collidingObject.transform.position.y = disty + mainCharacter.transform.position.y;
-		collidingObject.transform.position.z = distz + mainCharacter.transform.position.z;
+		if(distx < 0){
+			collidingObject.transform.position.x = mainCharacter.transform.position.x-1.2;
+		}
+
+		if(distx > 0){
+			collidingObject.transform.position.x = mainCharacter.transform.position.x+1.2;
+		}
+
+		collidingObject.transform.position.y = mainCharacter.transform.position.y;
+		collidingObject.transform.position.z = 0;
 		collidingObject.GetComponent.<Rigidbody>().velocity = new Vector3 (0,0,0);
 	}
 
@@ -72,9 +79,13 @@ function OnCollisionEnter(col:Collision){
 		collidingObject = GameObject.Find("Puzzle1");
 
 		//para amantener el objeto agarrado relativo a la posicion del jugador se toman estos valores
-		distx = collidingObject.transform.position.x - mainCharacter.transform.position.x;
-		disty = collidingObject.transform.position.y - mainCharacter.transform.position.y;
-		distz = collidingObject.transform.position.z - mainCharacter.transform.position.z;
+		if(collidingObject.transform.position.x < 0 || mainCharacter.transform.position.x < 0){
+			distx = Mathf.Abs(mainCharacter.transform.position.x) - Mathf.Abs(collidingObject.transform.position.x);
+		}else{
+			distx = Mathf.Abs(collidingObject.transform.position.x) - Mathf.Abs(mainCharacter.transform.position.x);
+		}
+		//disty = collidingObject.transform.position.y - mainCharacter.transform.position.y;
+		//distz = collidingObject.transform.position.z - mainCharacter.transform.position.z;
 	}
 }
 
